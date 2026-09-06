@@ -1,11 +1,13 @@
 from .lang import Lang
 from .slash_type import SlashType
-from .line_type2 import LineType2
+from .number_type1 import NumberType1
 from .line_type1 import LineType1
+from .line_type2 import LineType2
 
 __all__ = [
     "Lang",
     "SlashType",
-    "LineType2",
+    "NumberType1",
     "LineType1",
+    "LineType2",
 ]
