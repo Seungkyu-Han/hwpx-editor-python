@@ -1,5 +1,12 @@
 annotated-types==0.8.0
+beautifulsoup4==4.15.0
+cssselect==1.5.0
+lxml==6.1.3
 pydantic==2.13.5
 pydantic_core==2.46.5
+soupsieve==2.9.2
+types-html5lib==1.1.11.20260518
+types-lxml==2026.2.16
+types-webencodings==0.6.0.20260827
 typing-inspection==0.4.4
 typing_extensions==4.16.0
