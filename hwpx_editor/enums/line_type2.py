@@ -1,0 +1,15 @@
+from enum import StrEnum
+
+
+class LineType2(StrEnum):
+    NONE = "NONE"
+    SOLID = "SOLID"
+    DOT = "DOT"
+    DASH_DOT = "DASH_DOT"
+    DASH_DOT_DOT = "DASH_DOT_DOT"
+    LONG_DASH = "LONG_DASH"
+    CIRCLE = "CIRCLE"
+    DOUBLE_SLIM = "DOUBLE_SLIM"
+    SLIM_THICK = "SLIM_THICK"
+    THICK_SLIM = "THICK_SLIM"
+    SLIM_THICK_SLIM = "SLIM_THICK_SLIM"
