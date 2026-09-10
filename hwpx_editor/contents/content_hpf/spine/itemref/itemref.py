@@ -1,5 +1,5 @@
 from typing import Any
-from xml.etree.ElementTree import QName
+from lxml.etree import QName
 
 from lxml import etree
 from pydantic import BaseModel, Field

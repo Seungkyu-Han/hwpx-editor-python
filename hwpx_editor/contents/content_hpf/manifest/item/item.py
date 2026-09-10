@@ -1,4 +1,4 @@
-from xml.etree.ElementTree import QName
+from lxml.etree import QName
 
 from lxml import etree
 from typing import Any, Optional
