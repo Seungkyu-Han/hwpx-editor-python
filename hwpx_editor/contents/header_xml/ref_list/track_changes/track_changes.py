@@ -7,10 +7,6 @@ from hwpx_editor.contents.header_xml.ref_list.track_changes.track_change import 
 
 
 class TrackChanges(BaseModel):
-
-    item_cnt: int = Field(
-        default=0)
-
     track_changes: list[TrackChange] = Field(
         default_factory=lambda: [],
     )
@@ -18,7 +14,7 @@ class TrackChanges(BaseModel):
     def to_xml(self, namespace_uri: str) -> Any:
         """주어진 네임스페이스에 이 모델과 하위 XML 요소를 생성합니다."""
         attribs: dict[str, str] = {
-            "itemCnt": str(self.item_cnt),
+            "itemCnt": str(len(self.track_changes)),
         }
 
         element = etree.Element(etree.QName(namespace_uri, "trackChanges"), attrib=attribs)

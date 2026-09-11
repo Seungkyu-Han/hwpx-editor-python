@@ -12,11 +12,25 @@ from hwpx_editor.contents.header_xml.ref_list.para_properties.para_pr.para_pr im
 from hwpx_editor.values import HWPValue
 
 
+def _with_compatibility(paragraphs: list[ParaPr]) -> list[ParaPr]:
+    """기본 문서의 HwpUnitChar 값과 구버전용 여백을 각각 보관합니다."""
+    for paragraph in paragraphs:
+        for name in type(paragraph.margin).model_fields:
+            getattr(paragraph.margin, name).unit = "HWPUNIT"
+        paragraph.fallback_margin = paragraph.margin.model_copy(deep=True)
+        for name in type(paragraph.fallback_margin).model_fields:
+            getattr(paragraph.fallback_margin, name).value *= 2
+        paragraph.fallback_line_spacing = paragraph.line_spacing.model_copy(deep=True)
+        if paragraph.heading.type == "OUTLINE" and paragraph.heading.level >= 7:
+            paragraph.fallback_heading = Heading()
+    return paragraphs
+
+
 class ParaProperties(BaseModel):
     item_cnt: int = Field(default=20)
 
     para_prs: list[ParaPr] = Field(
-        default_factory= lambda: [
+        default_factory=lambda: _with_compatibility([
             ParaPr(
                 id=0,
                 align=Align(
@@ -137,19 +151,20 @@ class ParaProperties(BaseModel):
             ),
             ParaPr(
                 id=12,
+                condense=20,
                 tab_pr_id_ref=1,
                 break_setting=BreakSetting(break_not_latin_word="BREAK_WORD"),
                 align=Align(
                     vertical="BASELINE",
                 ),
-                margin=Margin(prev=HWPValue(value=1000), next=HWPValue(value=300)),
+                margin=Margin(prev=HWPValue(value=1200), next=HWPValue(value=300)),
             ),
             ParaPr(
                 id=13,
                 tab_pr_id_ref=2,
                 break_setting=BreakSetting(break_not_latin_word="BREAK_WORD"),
                 align=Align(
-                    horizontal="JUSTIFY",
+                    horizontal="LEFT",
                     vertical="BASELINE",
                 ),
                 margin=Margin(next=HWPValue(value=700)),
@@ -168,7 +183,7 @@ class ParaProperties(BaseModel):
                 tab_pr_id_ref=2,
                 break_setting=BreakSetting(break_not_latin_word="BREAK_WORD"),
                 align=Align(
-                    horizontal="JUSTIFY",
+                    horizontal="LEFT",
                     vertical="BASELINE",
                 ),
                 margin=Margin(left=HWPValue(value=2200), next=HWPValue(value=700)),
@@ -210,15 +225,15 @@ class ParaProperties(BaseModel):
                     vertical="BASELINE",
                 ),
                 line_spacing=LineSpacing(value=150),
-                margin=Margin(left=HWPValue(value=800)),
+                margin=Margin(next=HWPValue(value=800)),
             ),
-        ]
+        ])
     )
 
     def to_xml(self, namespace_uri: str) -> Any:
         """주어진 네임스페이스에 이 모델과 하위 XML 요소를 생성합니다."""
         attribs: dict[str, str] = {
-            "itemCnt": str(self.item_cnt),
+            "itemCnt": str(len(self.para_prs)),
         }
 
         element = etree.Element(etree.QName(namespace_uri, "paraProperties"), attrib=attribs)

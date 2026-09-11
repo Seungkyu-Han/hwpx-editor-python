@@ -3,6 +3,8 @@ from typing import Any, Literal
 from lxml import etree
 from pydantic import BaseModel, Field
 
+from hwpx_editor.namespaces import namespaces
+
 from hwpx_editor.contents.header_xml.ref_list.para_properties.para_pr.align import Align
 from hwpx_editor.contents.header_xml.ref_list.para_properties.para_pr.auto_spacing import AutoSpacing
 from hwpx_editor.contents.header_xml.ref_list.para_properties.para_pr.border import Border
@@ -38,8 +40,8 @@ class ParaPr(BaseModel):
         default=0,
         description="선택 글머리표 여부",
     )
-    text_dir: Literal["RTL", "LTR"] = Field(
-        default="LTR",
+    text_dir: Literal["RTL", "LTR"] | None = Field(
+        default=None,
         description="""
         문단 방향 정보
         RTL: 오른쪽에서 왼쪽
@@ -50,10 +52,10 @@ class ParaPr(BaseModel):
     align: Align = Field(default_factory=lambda: Align())
     heading: Heading = Field(default_factory=lambda: Heading())
     break_setting: BreakSetting = Field(default_factory=lambda: BreakSetting())
-    auto_spacing: AutoSpacing = Field(default_factory=lambda: AutoSpacing())
-    border: Border = Field(default_factory=lambda: Border())
     margin: Margin = Field(default_factory=lambda: Margin())
     line_spacing: LineSpacing = Field(default_factory=lambda: LineSpacing())
+    border: Border = Field(default_factory=lambda: Border(border_fill_id_ref=2))
+    auto_spacing: AutoSpacing = Field(default_factory=lambda: AutoSpacing())
 
     def to_xml(self, namespace_uri: str) -> Any:
         """주어진 네임스페이스에 이 모델과 하위 XML 요소를 생성합니다."""
@@ -65,8 +67,10 @@ class ParaPr(BaseModel):
             "snapToGrid": str(self.snap_to_grid),
             "suppressLineNumbers": str(self.suppress_line_numbers),
             "checked": str(self.checked),
-            "textDir": str(self.text_dir),
         }
+
+        if self.text_dir is not None:
+            attribs["textDir"] = self.text_dir
 
         element = etree.Element(etree.QName(namespace_uri, "paraPr"), attrib=attribs)
 
@@ -79,16 +83,16 @@ class ParaPr(BaseModel):
         q_name = etree.QName(namespace_uri, "breakSetting")
         element.append(self.break_setting.to_xml(q_name))
 
-        q_name = etree.QName(namespace_uri, "autoSpacing")
-        element.append(self.auto_spacing.to_xml(q_name))
+        margin_name = etree.QName(namespace_uri, "margin")
+        spacing_name = etree.QName(namespace_uri, "lineSpacing")
 
-        q_name = etree.QName(namespace_uri, "margin")
-        element.append(self.margin.to_xml(q_name))
-
-        q_name = etree.QName(namespace_uri, "lineSpacing")
-        element.append(self.line_spacing.to_xml(q_name))
+        element.append(self.margin.to_xml(margin_name))
+        element.append(self.line_spacing.to_xml(spacing_name))
 
         q_name = etree.QName(namespace_uri, "border")
         element.append(self.border.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "autoSpacing")
+        element.append(self.auto_spacing.to_xml(q_name))
 
         return element

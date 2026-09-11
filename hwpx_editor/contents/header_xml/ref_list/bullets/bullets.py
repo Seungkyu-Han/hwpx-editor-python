@@ -7,9 +7,6 @@ from hwpx_editor.contents.header_xml.ref_list.bullets.bullet import Bullet
 
 
 class Bullets(BaseModel):
-
-    item_cnt: int = Field(default=1)
-
     bullets: list[Bullet] = Field(
         default_factory=lambda: [Bullet(
             id=1,
@@ -19,7 +16,7 @@ class Bullets(BaseModel):
     def to_xml(self, namespace_uri: str) -> Any:
         """주어진 네임스페이스에 이 모델과 하위 XML 요소를 생성합니다."""
         attribs: dict[str, str] = {
-            "itemCnt": str(self.item_cnt),
+            "itemCnt": str(len(self.bullets)),
         }
 
         element = etree.Element(etree.QName(namespace_uri, "bullets"), attrib=attribs)

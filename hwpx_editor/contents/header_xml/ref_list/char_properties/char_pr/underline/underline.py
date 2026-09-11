@@ -10,7 +10,7 @@ from hwpx_editor.values import HexColor
 
 
 class Underline(BaseModel, validate_assignment=True):
-    type: Optional[Literal["BOTTOM", "CENTER", "TOP"]] = Field(default=None)
+    type: Optional[Literal["NONE", "BOTTOM", "CENTER", "TOP"]] = Field(default="NONE")
     shape: LineType2 = Field(default=LineType2.SOLID)
     color: HexColor = Field(default="#000000")
 

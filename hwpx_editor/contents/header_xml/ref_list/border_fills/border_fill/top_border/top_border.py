@@ -11,7 +11,7 @@ from hwpx_editor.values import HexColor
 
 class TopBorder(BaseModel, validate_assignment=True):
     type: LineType2 = Field(default=LineType2.NONE)
-    width: float = Field(default=0.12)
+    width: float = Field(default=0.1)
     color: HexColor = Field(default="#000000")
 
     def to_xml(self, q_name: QName) -> Any:

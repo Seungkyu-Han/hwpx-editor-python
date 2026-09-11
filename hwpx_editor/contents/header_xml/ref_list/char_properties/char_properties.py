@@ -4,10 +4,10 @@ from lxml import etree
 from pydantic import BaseModel, Field
 
 from hwpx_editor.contents.header_xml.ref_list.char_properties.char_pr import CharPr
+from hwpx_editor.contents.header_xml.ref_list.char_properties.char_pr.spacing import Spacing
 
 
 class CharProperties(BaseModel):
-    item_cnt: int = Field(default=5)
     char_prs: list[CharPr] = Field(
         default_factory=lambda: [
             CharPr(
@@ -22,6 +22,7 @@ class CharProperties(BaseModel):
             ),
             CharPr(
                 id=2,
+                spacing=Spacing(hangul=-5, latin=-5, hanja=-5, japanese=-5, other=-5, symbol=-5, user=-5),
                 height=900,
                 text_color="#000000",
             ),
@@ -41,7 +42,7 @@ class CharProperties(BaseModel):
     def to_xml(self, namespace_uri: str) -> Any:
         """주어진 네임스페이스에 이 모델과 하위 XML 요소를 생성합니다."""
         attribs: dict[str, str] = {
-            "itemCnt": str(self.item_cnt),
+            "itemCnt": str(len(self.char_prs)),
         }
 
         element = etree.Element(etree.QName(namespace_uri, "charProperties"), attrib=attribs)

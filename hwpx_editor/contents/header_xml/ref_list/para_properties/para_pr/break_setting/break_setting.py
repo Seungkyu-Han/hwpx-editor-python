@@ -12,7 +12,7 @@ class BreakSetting(BaseModel):
     keep_with_next: int = Field(default=0, description="다음 문단과 함께 여부")
     keep_lines: int = Field(default=0, description="문단 보호 여부")
     page_break_before: int = Field(default=0, description="문단 앞에서 항상 쪽 나눔 여부")
-    line_wrap: Literal["BREAK"] = Field(default="WRAP_NONE", description="한 줄로 입력 사용 시의 형식")
+    line_wrap: Literal["BREAK"] = Field(default="BREAK", description="한 줄로 입력 사용 시의 형식")
 
     def to_xml(self, q_name: QName) -> Any:
         """이 모델을 주어진 태그의 XML 요소로 변환합니다."""

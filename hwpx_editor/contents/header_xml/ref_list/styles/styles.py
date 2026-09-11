@@ -7,11 +7,6 @@ from hwpx_editor.contents.header_xml.ref_list.styles.style import Style
 
 
 class Styles(BaseModel):
-    item_cnt: int = Field(
-        default=21,
-        ge=0,
-    )
-
     styles: list[Style] = Field(
         default_factory=lambda: [
             Style(id=0, type="PARA", name="바탕글", eng_name="Normal", para_pr_id_ref=0, char_pr_id_ref=0,
@@ -64,7 +59,7 @@ class Styles(BaseModel):
     def to_xml(self, namespace_uri: str) -> Any:
         """주어진 네임스페이스에 이 모델과 하위 XML 요소를 생성합니다."""
         attribs: dict[str, str] = {
-            "itemCnt": str(self.item_cnt),
+            "itemCnt": str(len(self.styles)),
         }
 
         element = etree.Element(etree.QName(namespace_uri, "styles"), attrib=attribs)
