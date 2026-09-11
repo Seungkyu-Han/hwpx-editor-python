@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from xml.etree.ElementTree import QName
+from lxml.etree import QName
 
 from lxml import etree
 from pydantic import BaseModel, Field
@@ -19,10 +19,11 @@ class TypeInfo(BaseModel):
     x_height: int = Field(default=255, description="xHeight")
 
     def to_xml(self, q_name: QName) -> Any:
+        """이 모델을 주어진 태그의 XML 요소로 변환합니다."""
         attribs: dict[str, str] = {
             "weight": str(self.weight),
             "proportion": str(self.proportion),
-            "contrast": self.contrast,
+            "contrast": str(self.contrast),
             "strokeVariation": str(self.stroke_variation),
             "armStyle": str(self.arm_style),
             "letterform": str(self.letterform),
@@ -31,12 +32,11 @@ class TypeInfo(BaseModel):
         }
 
         if self.family_type is not None:
-            attribs["familyType"] = self.family_type
+            attribs["familyType"] = str(self.family_type)
 
         if self.serif_style is not None:
-            attribs["serifStyle"] = self.serif_style
+            attribs["serifStyle"] = str(self.serif_style)
 
-        return etree.Element(
-            q_name,
-            attrib=attribs,
-        )
+        element = etree.Element(q_name, attrib=attribs)
+
+        return element

@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Any, Optional
 
+from lxml import etree
 from pydantic import BaseModel, Field
 
 from hwpx_editor.contents.header_xml.ref_list.border_fills.border_fill.back_slash import BackSlash
@@ -28,3 +29,41 @@ class BorderFill(BaseModel):
     bottom_border: BottomBorder = Field(default_factory=lambda: BottomBorder())
     diagonal: Diagonal = Field(default_factory=lambda: Diagonal())
     fill_brush: Optional[FillBrush] = Field(default=None)
+
+    def to_xml(self, namespace_uri: str, hc_namespace_uri: str) -> Any:
+        """주어진 네임스페이스에 이 모델과 하위 XML 요소를 생성합니다."""
+        attribs: dict[str, str] = {
+            "id": str(self.id),
+            "threeD": str(self.three_d),
+            "shadow": str(self.shadow),
+            "centerLine": str(self.center_line),
+            "breakCellSeparateLine": str(self.break_cell_separate_line),
+        }
+
+        element = etree.Element(etree.QName(namespace_uri, "borderFill"), attrib=attribs)
+
+        q_name = etree.QName(namespace_uri, "slash")
+        element.append(self.slash.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "backSlash")
+        element.append(self.back_slash.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "leftBorder")
+        element.append(self.left_border.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "rightBorder")
+        element.append(self.right_border.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "topBorder")
+        element.append(self.top_border.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "bottomBorder")
+        element.append(self.bottom_border.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "diagonal")
+        element.append(self.diagonal.to_xml(q_name))
+
+        if self.fill_brush is not None:
+            element.append(self.fill_brush.to_xml(hc_namespace_uri))
+
+        return element

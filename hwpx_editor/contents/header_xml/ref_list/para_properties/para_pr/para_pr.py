@@ -1,5 +1,6 @@
-from typing import Literal
+from typing import Any, Literal
 
+from lxml import etree
 from pydantic import BaseModel, Field
 
 from hwpx_editor.contents.header_xml.ref_list.para_properties.para_pr.align import Align
@@ -53,3 +54,41 @@ class ParaPr(BaseModel):
     border: Border = Field(default_factory=lambda: Border())
     margin: Margin = Field(default_factory=lambda: Margin())
     line_spacing: LineSpacing = Field(default_factory=lambda: LineSpacing())
+
+    def to_xml(self, namespace_uri: str) -> Any:
+        """주어진 네임스페이스에 이 모델과 하위 XML 요소를 생성합니다."""
+        attribs: dict[str, str] = {
+            "id": str(self.id),
+            "tabPrIDRef": str(self.tab_pr_id_ref),
+            "condense": str(self.condense),
+            "fontLineHeight": str(self.font_line_height),
+            "snapToGrid": str(self.snap_to_grid),
+            "suppressLineNumbers": str(self.suppress_line_numbers),
+            "checked": str(self.checked),
+            "textDir": str(self.text_dir),
+        }
+
+        element = etree.Element(etree.QName(namespace_uri, "paraPr"), attrib=attribs)
+
+        q_name = etree.QName(namespace_uri, "align")
+        element.append(self.align.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "heading")
+        element.append(self.heading.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "breakSetting")
+        element.append(self.break_setting.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "autoSpacing")
+        element.append(self.auto_spacing.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "margin")
+        element.append(self.margin.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "lineSpacing")
+        element.append(self.line_spacing.to_xml(q_name))
+
+        q_name = etree.QName(namespace_uri, "border")
+        element.append(self.border.to_xml(q_name))
+
+        return element

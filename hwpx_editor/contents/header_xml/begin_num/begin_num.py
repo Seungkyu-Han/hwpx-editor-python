@@ -1,5 +1,5 @@
 from typing import Any
-from xml.etree.ElementTree import QName
+from lxml.etree import QName
 
 from lxml import etree
 from pydantic import BaseModel, Field
@@ -14,7 +14,7 @@ class BeginNum(BaseModel):
     equation: int = Field(default=1, description="수식 시작 번호")
 
     def to_xml(self, q_name: QName) -> Any:
-
+        """이 모델을 주어진 태그의 XML 요소로 변환합니다."""
         attribs: dict[str, str] = {
             "page": str(self.page),
             "footnote": str(self.footnote),
@@ -24,7 +24,6 @@ class BeginNum(BaseModel):
             "equation": str(self.equation),
         }
 
-        return etree.Element(
-            q_name,
-            attrib=attribs,
-        )
+        element = etree.Element(q_name, attrib=attribs)
+
+        return element

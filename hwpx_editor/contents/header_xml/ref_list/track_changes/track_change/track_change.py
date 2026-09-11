@@ -1,5 +1,8 @@
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
+from lxml.etree import QName
+
+from lxml import etree
 
 from pydantic import BaseModel, Field
 
@@ -24,7 +27,7 @@ class TrackChange(BaseModel):
     )
 
     date: datetime = Field(
-        lambda: datetime.now(),
+        default_factory=datetime.now,
     )
 
     author_id: int = Field(
@@ -55,3 +58,19 @@ class TrackChange(BaseModel):
     id: int = Field(
         ge=0,
     )
+
+    def to_xml(self, q_name: QName) -> Any:
+        """이 모델을 주어진 태그의 XML 요소로 변환합니다."""
+        attribs: dict[str, str] = {
+            "type": str(self.type),
+            "date": self.date.isoformat(),
+            "authorID": str(self.author_id),
+            "charShapeID": str(self.char_shape_id),
+            "paraShapeID": str(self.para_shape_id),
+            "hide": str(self.hide),
+            "id": str(self.id),
+        }
+
+        element = etree.Element(q_name, attrib=attribs)
+
+        return element
